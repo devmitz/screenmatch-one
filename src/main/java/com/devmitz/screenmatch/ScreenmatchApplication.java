@@ -1,5 +1,6 @@
 package com.devmitz.screenmatch;
 
+import com.devmitz.screenmatch.model.DadosEpisodio;
 import com.devmitz.screenmatch.model.DadosSerie;
 import com.devmitz.screenmatch.service.ConsumoApi;
 import com.devmitz.screenmatch.service.ConverteDados;
@@ -18,9 +19,17 @@ public class ScreenmatchApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		System.out.println("Projeto Java Spring sem Web");
 		var consumoApi = new ConsumoApi();
+
+
 		var json =  consumoApi.obterDados("http://www.omdbapi.com/?t=breaking+bad&apikey=66f9433c&");
 		ConverteDados conversor = new ConverteDados();
 		DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
 		System.out.println(dados);
+
+		json = consumoApi.obterDados("http://www.omdbapi.com/?t=breaking+bad&season=1&episode=5&apikey=66f9433c&");
+		DadosEpisodio dadosEpisodio = conversor.obterDados(json, DadosEpisodio.class);
+		System.out.println(dadosEpisodio);
+
+
 	}
 }
