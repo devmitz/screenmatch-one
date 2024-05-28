@@ -1,13 +1,17 @@
 package com.devmitz.screenmatch.principal;
 
+import com.devmitz.screenmatch.model.DadosEpisodio;
 import com.devmitz.screenmatch.model.DadosSerie;
 import com.devmitz.screenmatch.model.DadosTemporada;
+import com.devmitz.screenmatch.model.Episodio;
 import com.devmitz.screenmatch.service.ConsumoApi;
 import com.devmitz.screenmatch.service.ConverteDados;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Principal {
     private Scanner sc = new Scanner(System.in);
@@ -40,5 +44,26 @@ public class Principal {
 //            }
 //        }
         dadosTemporadaList.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
+
+        List<DadosEpisodio> dadosEpisodios = dadosTemporadaList.stream()
+                .flatMap(t -> t.episodios().stream())
+                .collect(Collectors.toList());
+
+        System.out.println("\nTop 5 episódios: ");
+
+        dadosEpisodios.stream()
+                .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
+                .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
+                .limit(5)
+                .forEach(System.out::println);
+
+
+        System.out.println("\nEpisodios:");
+        List<Episodio> episodios = dadosTemporadaList.stream()
+                .flatMap(t -> t.episodios().stream()
+                        .map(d -> new Episodio(t.numeroTemporada(), d))
+                ).collect(Collectors.toList());
+
+        episodios.forEach(System.out::println);
     }
 }
