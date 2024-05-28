@@ -7,6 +7,7 @@ import com.devmitz.screenmatch.model.Episodio;
 import com.devmitz.screenmatch.service.ConsumoApi;
 import com.devmitz.screenmatch.service.ConverteDados;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,7 +54,9 @@ public class Principal {
 
         dadosEpisodios.stream()
                 .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
+                .peek(e -> System.out.println("INFO | Primeiro filtro (N/A) " + e))
                 .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
+                .peek(e -> System.out.println("PEEK | Sorted: " + e))
                 .limit(5)
                 .forEach(System.out::println);
 
@@ -63,7 +66,23 @@ public class Principal {
                 .flatMap(t -> t.episodios().stream()
                         .map(d -> new Episodio(t.numeroTemporada(), d))
                 ).collect(Collectors.toList());
-
         episodios.forEach(System.out::println);
+
+
+        System.out.println("A partir de qual ano você deseja ver os episódios?");
+        var ano = sc.nextInt();
+        sc.nextLine();
+
+        LocalDate dataBusca = LocalDate.of(ano, 1, 1);
+
+        episodios.stream()
+                .filter(e -> e.getDataLancamento() != null && e.getDataLancamento().isAfter(dataBusca))
+                .forEach(e -> System.out.println(
+                        "Temporada: " + e.getTemporada() +
+                                " Episodio: " + e.getTitulo() +
+                                " Data de lançamento: " + e.getDataLancamento()
+                ));
+
+
     }
 }
